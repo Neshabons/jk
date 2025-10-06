@@ -299,14 +299,11 @@ app.get('/requests.html', (req, res) => {
 app.get('/index.html', (req, res) => {
     res.redirect('/');
 });
-
-// Запуск сервера
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Database: chat.db`);
     console.log(`🔐 API endpoints available at /api/`);
 });
-
 // Обработка graceful shutdown
 process.on('SIGINT', () => {
     console.log('\n🛑 Shutting down server...');
@@ -451,9 +448,4 @@ app.patch('/api/requests/:id/status', authenticateToken, (req, res) => {
             });
         }
     );
-});
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📊 Database: chat.db`);
-    console.log(`🔐 API endpoints available at /api/`);
 });
