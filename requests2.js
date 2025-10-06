@@ -28,7 +28,6 @@ function submitRequest() {
     
     console.log('📤 Sending request:', { title, description, priority });
     
-    // Отправка на сервер
     const userKey = localStorage.getItem('userKey');
     if (!userKey) {
         alert('Ошибка авторизации');
@@ -64,7 +63,8 @@ function resetForm() {
     document.getElementById("request-title").value = "";
     document.getElementById("request-description").value = "";
     document.getElementById("request-priority").value = "medium";
-    document.getElementById("request-form").classList.add("hidden");
+    const form = document.getElementById("request-form");
+    if (form) form.classList.add("hidden");
 }
 
 // Функция для отображения заявок
@@ -120,11 +120,19 @@ async function displayRequests() {
                         <small>Приоритет: ${getPriorityText(request.priority)}</small>
                     </div>
                     <div class="request-actions">
-                        <button onclick="deleteRequest(${request.id})" class="btn-delete">Удалить</button>
+                        <button class="btn-delete" data-id="${request.id}">Удалить</button>
                     </div>
                 </div>
             `;
             container.appendChild(requestElement);
+        });
+        
+        // Добавляем обработчики для кнопок удаления
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const requestId = this.getAttribute('data-id');
+                deleteRequest(requestId);
+            });
         });
         
     } catch (error) {
@@ -183,36 +191,43 @@ function getPriorityText(priority) {
     return priorityMap[priority] || priority;
 }
 
-// Автоматически загружаем заявки при загрузке страницы
+// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Page loaded, displaying requests...');
-    displayRequests();
+    console.log('🚀 Page loaded, initializing...');
     
-    // Добавляем обработчики событий для кнопок
+    // Находим все элементы и добавляем обработчики
     const showFormBtn = document.getElementById('show-request-form-btn');
+    const submitBtn = document.getElementById('submit-request-btn');
+    const cancelBtn = document.getElementById('cancel-request-btn');
+    
     if (showFormBtn) {
         showFormBtn.addEventListener('click', showRequestForm);
-        console.log('✅ Button event listener added');
+        console.log('✅ Show form button event listener added');
     } else {
         console.error('❌ Show form button not found');
     }
     
-    const submitBtn = document.getElementById('submit-request-btn');
     if (submitBtn) {
         submitBtn.addEventListener('click', submitRequest);
+        console.log('✅ Submit button event listener added');
     }
     
-    const cancelBtn = document.getElementById('cancel-request-btn');
     if (cancelBtn) {
         cancelBtn.addEventListener('click', resetForm);
+        console.log('✅ Cancel button event listener added');
     }
+    
+    // Загружаем заявки
+    displayRequests();
+    
+    console.log('🎉 requests2.js initialized successfully');
 });
 
-// Регистрируем функции глобально (на всякий случай)
+// Регистрируем функции глобально (для обратной совместимости)
 window.showRequestForm = showRequestForm;
 window.submitRequest = submitRequest;
 window.resetForm = resetForm;
 window.displayRequests = displayRequests;
 window.deleteRequest = deleteRequest;
 
-console.log('🎉 requests2.js loaded successfully');
+console.log('✅ requests2.js loaded');
