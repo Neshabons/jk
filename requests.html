@@ -70,52 +70,6 @@
             </div>
         </div>
     </main>
-<script>
-// Временные функции для отладки
-console.log('🔄 Loading inline functions...');
-
-function showRequestForm() {
-    console.log('📝 showRequestForm called - IT WORKS!');
-    const form = document.getElementById("request-form");
-    if (form) {
-        form.classList.remove("hidden");
-        console.log('✅ Form shown successfully');
-    } else {
-        console.error('❌ Form element not found');
-    }
-}
-
-function submitRequest() {
-    console.log('📤 submitRequest called');
-    const title = document.getElementById("request-title").value;
-    const description = document.getElementById("request-description").value;
-    
-    if (!title || !description) {
-        alert("Заполните все поля");
-        return;
-    }
-    
-    alert('Заявка создана! (тестовый режим)');
-    
-    // Сброс формы
-    document.getElementById("request-title").value = "";
-    document.getElementById("request-description").value = "";
-    document.getElementById("request-form").classList.add("hidden");
-}
-
-function resetForm() {
-    document.getElementById("request-title").value = "";
-    document.getElementById("request-description").value = "";
-    document.getElementById("request-form").classList.add("hidden");
-}
-
-// Сделать глобальными
-window.showRequestForm = showRequestForm;
-window.submitRequest = submitRequest;
-window.resetForm = resetForm;
-
-console.log('✅ Inline functions loaded');
-</script>
     <script src="app.js"></script>
     <script src="requests2.js"></script>
 </body>
