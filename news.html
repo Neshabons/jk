@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новости управляющей компании</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="s/Logo.svg" class="logo">
+        <nav>
+            <a href="site.html">Главная</a>
+            <a href="requests.html">Заявки</a>
+        </nav>
+        <nav class="right-menu">
+            <div id="user-info" class="hidden">
+                <span id="username-display"></span>
+                <button onclick="logout()">Выход</button>
+            </div>
+            <div id="auth-links">
+                <a href="login.html">Вход</a>
+                <a href="register.html">Регистрация</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div style="text-align: center; margin: 20px 0;">
+            <button id="add-news-btn" onclick="showNewsForm()">Добавить новость</button>
+        </div>
+
+        <form id="news-form" class="hidden" style="max-width: 600px; margin: 0 auto 40px auto;">
+            <h3>Добавить новую новость</h3>
+            <input type="text" id="news-title" placeholder="Заголовок новости" required>
+            <textarea id="news-content" placeholder="Текст новости" rows="5" required></textarea>
+            <input type="file" id="news-image" accept="image/*" style="margin: 10px 0;">
+            <div class="form-actions">
+                <button type="button" onclick="addNews()">Опубликовать</button>
+                <button type="button" onclick="hideNewsForm()">Отмена</button>
+            </div>
+        </form>
+
+
+        <div class="news-container" id="news-container">
+
+        </div>
+
+
+        <div id="static-news">
+            <article class="news-item" data-static="true">
+                <div class="news-header">
+                    <h2>Новостройки на районе</h2>
+                </div>
+                <img src="s/news1.jpg" alt="Изображение новости 1" class="news-image">
+                <p style="white-space: pre-line">Долгие годы квартирный спрос возрастал, но людям не хватало свободных мест, чтобы поселиться в ЖК "Несский". Но теперь мы с полной уверенностью можем открыть предзаказ жилой площади для новых жильцов нашего многоквартирного комплекса. Парковочные места, садики, ограниченный жилой двор. Нет места лучше, чтобы осесть в тёплом гнезде со своей семьей и не думать о возникших проблемах с жильём. Наша компания поможет не только при покупке и ремонте квартиры, но и даёт гарантию на решение всех последующих вопросов, появившихся за время жизни в ЖК "Несское". По всем возникшим вопросам обращаться по телефону: +7 911 321 21 21</p>
+                <div class="news-footer">
+                    <div class="news-meta">
+                        <small>Опубликовано: -</small>
+                        <small>Автор: Администрация</small>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-item" data-static="true">
+                <div class="news-header">
+                    <h2>Задержки с отключением отопления</h2>
+                </div>
+                <img src="s/news2.jpg" alt="Изображение новости 2" class="news-image">
+                <p style="white-space: pre-line">Прошлые зимы возникали жалобы на то, что отопление отключается раньше, чем холода полностью заменяются пылким солнцем. Руководство Жилого Комплекса решило, что продлит поступление теплоты до полного наступления весны. Плата за дополнительное время подачи отопления взыматься не будет!</p>
+                <div class="news-footer">
+                    <div class="news-meta">
+                        <small>Опубликовано: -</small>
+                        <small>Автор: Администрация</small>
+                    </div>
+                </div>
+            </article>
+
+            <article class="news-item" data-static="true">
+                <div class="news-header">
+                    <h2>Будьте осторожны!</h2>
+                </div>
+                <img src="s/news3.jpg" alt="Изображение новости 3" class="news-image">
+                <p style="white-space: pre-line">Просим отнестись со всей серьезностью к следующей новости. В окрестностях близлежащих районов людьми были замечены подозрительные личности. Убедительная просьба не оставлять своих детей без присмотра до прояснения ситуации. Охрана уже дежурит по периметру.</p>
+                <div class="news-footer">
+                    <div class="news-meta">
+                        <small>Опубликовано: -</small>
+                        <small>Автор: Администрация</small>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </main>
+
+    <footer>
+        <p align="center">NeS Company</p>
+        <p align="center">2025</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="news.js"></script>
+</body>
+</html>

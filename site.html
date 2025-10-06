@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чат управляющей компании</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="s/Logo.svg" class="logo">
+        <nav>
+            <a href="requests.html">Заявки</a>
+            <a href="news.html">Новости</a>
+        </nav>
+        <nav class="right-menu">
+            <div id="user-info" class="hidden">
+                <span>Вы вошли как: <span id="username-display"></span></span>
+                <button onclick="logout()" class="btn-logout">Выход</button>
+            </div>
+            <div id="auth-links">
+                <a href="login.html">Вход</a>
+                <a href="register.html">Регистрация</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div id="Welcome" class="welcome-section">
+            <h1>Добро пожаловать на сайт компании ЖК "Несское"!</h1>
+            <p>Для доступа к чату и другим функциям, пожалуйста, войдите в систему или зарегистрируйтесь.</p>
+        </div>
+
+        <div id="chat" class="chat-section hidden">
+            <div class="chat-header">
+                <h2>Чат управляющей компании</h2>
+                <div class="chat-info">
+                    <span id="online-count">1</span> онлайн
+                </div>
+            </div>
+            
+            <div id="messages" class="messages-container">
+            </div>
+            
+            <div class="message-input-container">
+                <input type="text" id="chat-input" placeholder="Введите ваше сообщение..." maxlength="500">
+                <button id="send-button" onclick="sendMessage()">Отправить</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
