@@ -17,3 +17,12 @@
     "nodemon": "^3.0.1"
   }
 }
+{
+  "name": "chat-app",
+  "version": "1.0.0",
+  "description": "Chat application for ЖК Несское",
+  "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
