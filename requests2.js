@@ -64,21 +64,28 @@ function submitRequest() {
         alert('Ошибка соединения с сервером');
     });
 }
+
 function resetForm() {
-    console.log(' resetForm called');
+    console.log('🔄 Reset form called');
     document.getElementById("request-title").value = "";
     document.getElementById("request-description").value = "";
-    document.getElementById("request-form").classList.add("hidden");
+    document.getElementById("request-priority").value = "medium";
+    const form = document.getElementById("request-form");
+    if (form) form.classList.add("hidden");
 }
 
 // Функция для отображения заявок
 async function displayRequests() {
+    console.log('📂 Displaying requests');
+    
+    // ДОБАВЛЕНО: получаем API_BASE
     const API_BASE = getApiBase();
-    console.log(' Displaying requests');
+    console.log('Using API Base for display:', API_BASE);
+    
     const container = document.getElementById("requests-container");
     
     if (!container) {
-        console.error(' Container not found');
+        console.error('❌ Container not found');
         return;
     }
     
@@ -89,14 +96,14 @@ async function displayRequests() {
     }
     
     try {
-        const response = await fetch('http://localhost:3000/api/requests', {
+        const response = await fetch(API_BASE + '/requests', {
             headers: {
                 'Authorization': userKey
             }
         });
         
         if (!response.ok) {
-            throw new Error('Ошибка загрузки заявок');
+            throw new Error('Ошибка загрузки заявок. Status: ' + response.status);
         }
         
         const requests = await response.json();
@@ -107,10 +114,8 @@ async function displayRequests() {
             return;
         }
         
-        // Очищаем контейнер
         container.innerHTML = '';
         
-        // Отображаем заявки
         requests.forEach(request => {
             const requestElement = document.createElement('div');
             requestElement.className = `request priority-${request.priority} status-${request.status}`;
@@ -127,29 +132,40 @@ async function displayRequests() {
                         <small>Приоритет: ${getPriorityText(request.priority)}</small>
                     </div>
                     <div class="request-actions">
-                        <button onclick="deleteRequest(${request.id})" class="btn-delete">Удалить</button>
+                        <button class="btn-delete" data-id="${request.id}">Удалить</button>
                     </div>
                 </div>
             `;
             container.appendChild(requestElement);
         });
         
+        // Добавляем обработчики для кнопок удаления
+        document.querySelectorAll('.btn-delete').forEach(button => {
+            button.addEventListener('click', function() {
+                const requestId = this.getAttribute('data-id');
+                deleteRequest(requestId);
+            });
+        });
+        
     } catch (error) {
         console.error('Error loading requests:', error);
-        container.innerHTML = '<div class="error">Ошибка загрузки заявок</div>';
+        container.innerHTML = '<div class="error">Ошибка загрузки заявок: ' + error.message + '</div>';
     }
 }
 
 // Функция удаления заявки
 async function deleteRequest(id) {
-    const API_BASE = getApiBase();
     if (!confirm('Удалить эту заявку?')) return;
+    
+    // ДОБАВЛЕНО: получаем API_BASE
+    const API_BASE = getApiBase();
+    console.log('Using API Base for delete:', API_BASE);
     
     const userKey = localStorage.getItem('userKey');
     if (!userKey) return;
     
     try {
-        const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
+        const response = await fetch(API_BASE + '/requests/' + id, {
             method: 'DELETE',
             headers: {
                 'Authorization': userKey
@@ -160,7 +176,7 @@ async function deleteRequest(id) {
         
         if (data.success) {
             alert('Заявка удалена');
-            displayRequests(); // Обновляем список
+            displayRequests();
         } else {
             alert('Ошибка: ' + data.error);
         }
@@ -173,28 +189,41 @@ async function deleteRequest(id) {
 // Вспомогательные функции
 function getStatusText(status) {
     const statusMap = {
-        'new': ' Новая',
-        'in-progress': ' В работе',
-        'completed': ' Завершена',
-        'rejected': ' Отклонена'
+        'new': '🆕 Новая',
+        'in-progress': '🔄 В работе',
+        'completed': '✅ Завершена',
+        'rejected': '❌ Отклонена'
     };
     return statusMap[status] || status;
 }
 
 function getPriorityText(priority) {
     const priorityMap = {
-        'low': ' Низкий',
-        'medium': ' Средний', 
-        'high': ' Высокий',
-        'critical': ' Критический'
+        'low': '🟢 Низкий',
+        'medium': '🟡 Средний', 
+        'high': '🟠 Высокий',
+        'critical': '🔴 Критический'
     };
     return priorityMap[priority] || priority;
 }
 
-// Автоматически загружаем заявки при загрузке страницы
+// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Page loaded, displaying requests...');
+    console.log('🚀 Page loaded, initializing...');
+    
+    // Проверяем авторизацию и показываем кнопку создания заявки
+    const userKey = localStorage.getItem('userKey');
+    const createBtn = document.getElementById('create-request-btn');
+    
+    if (userKey && createBtn) {
+        createBtn.style.display = 'block';
+        console.log('✅ User authorized, show create button');
+    }
+    
+    // Загружаем заявки
     displayRequests();
+    
+    console.log('🎉 requests2.js initialized successfully');
 });
 
 // Регистрируем функции глобально
@@ -204,4 +233,4 @@ window.resetForm = resetForm;
 window.displayRequests = displayRequests;
 window.deleteRequest = deleteRequest;
 
-console.log('🎉 requests.js loaded successfully');
+console.log('✅ requests2.js loaded');
