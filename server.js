@@ -13,7 +13,14 @@ const app = express();
 const PORT = process.env.PORT;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost:3000',
+        'https://your-app.onrender.com',
+        'https://*.onrender.com'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 
 // Правильная настройка статических файлов
