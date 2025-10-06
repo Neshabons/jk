@@ -15,7 +15,21 @@ const PORT = process.env.PORT;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+
+// Правильная настройка статических файлов
+app.use(express.static(path.join(__dirname), {
+    index: false, // Не использовать index.html автоматически
+    extensions: ['html', 'css', 'js'] // Разрешить эти расширения
+}));
+
+// Явно обслуживаем папку s для логотипов
+app.use('/s', express.static(path.join(__dirname, 's')));
+
+// Middleware для отладки (можно удалить после проверки)
+app.use((req, res, next) => {
+    console.log('📥 Request:', req.method, req.url);
+    next();
+});
 
 // Инициализация базы данных
 const db = new sqlite3.Database('./chat.db', (err) => {
@@ -45,27 +59,29 @@ function initDatabase() {
             console.log('Users table ready');
         }
     });
-// Таблица заявок
-db.run(`
-    CREATE TABLE IF NOT EXISTS requests (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_key TEXT NOT NULL,
-        username TEXT NOT NULL,
-        title TEXT NOT NULL,
-        description TEXT NOT NULL,
-        priority TEXT NOT NULL DEFAULT 'medium',
-        status TEXT NOT NULL DEFAULT 'new',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_key) REFERENCES users (user_key)
-    )
-`, (err) => {
-    if (err) {
-        console.error('Error creating requests table:', err);
-    } else {
-        console.log('Requests table ready');
-    }
-});
+
+    // Таблица заявок
+    db.run(`
+        CREATE TABLE IF NOT EXISTS requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_key TEXT NOT NULL,
+            username TEXT NOT NULL,
+            title TEXT NOT NULL,
+            description TEXT NOT NULL,
+            priority TEXT NOT NULL DEFAULT 'medium',
+            status TEXT NOT NULL DEFAULT 'new',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_key) REFERENCES users (user_key)
+        )
+    `, (err) => {
+        if (err) {
+            console.error('Error creating requests table:', err);
+        } else {
+            console.log('Requests table ready');
+        }
+    });
+
     // Таблица сообщений
     db.run(`
         CREATE TABLE IF NOT EXISTS messages (
@@ -274,8 +290,7 @@ app.post('/api/migrate', authenticateToken, (req, res) => {
     });
 });
 
-
-// Маршруты для HTML страниц
+// Явные маршруты для HTML страниц
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'site.html'));
 });
@@ -292,31 +307,24 @@ app.get('/requests', (req, res) => {
     res.sendFile(path.join(__dirname, 'requests.html'));
 });
 
+app.get('/news', (req, res) => {
+    res.sendFile(path.join(__dirname, 'news.html'));
+});
+
+// Редиректы для старых URL
 app.get('/requests.html', (req, res) => {
     res.redirect('/requests');
 });
-// Если запрашивают index.html - перенаправляем на site.html
+
 app.get('/index.html', (req, res) => {
     res.redirect('/');
 });
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📊 Database: chat.db`);
-    console.log(`🔐 API endpoints available at /api/`);
+
+app.get('/news.html', (req, res) => {
+    res.redirect('/news');
 });
-// Обработка graceful shutdown
-process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down server...');
-    db.close((err) => {
-        if (err) {
-            console.error('Error closing database:', err);
-        } else {
-            console.log('Database connection closed');
-        }
-        process.exit(0);
-    });
-});
-// Создание заявки
+
+// API endpoints для заявок
 app.post('/api/requests', authenticateToken, (req, res) => {
     const { title, description, priority = 'medium' } = req.body;
     const { user_key, username } = req.user;
@@ -448,4 +456,25 @@ app.patch('/api/requests/:id/status', authenticateToken, (req, res) => {
             });
         }
     );
+});
+
+// Запуск сервера
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Database: chat.db`);
+    console.log(`🔐 API endpoints available at /api/`);
+    console.log(`🌐 Static files serving from: ${__dirname}`);
+});
+
+// Обработка graceful shutdown
+process.on('SIGINT', () => {
+    console.log('\n🛑 Shutting down server...');
+    db.close((err) => {
+        if (err) {
+            console.error('Error closing database:', err);
+        } else {
+            console.log('Database connection closed');
+        }
+        process.exit(0);
+    });
 });
