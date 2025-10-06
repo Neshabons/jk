@@ -1,20 +1,20 @@
 const API_BASE = window.location.origin + '/api';
 console.log('API Base URL:', API_BASE);
-// requests.js - с функцией отображения заявок
-console.log(' requests.js started loading');
+
+console.log('✅ requests.js started loading');
 
 // Основные функции
 function showRequestForm() {
-    console.log(' showRequestForm called');
+    console.log('📝 Show request form called');
     const form = document.getElementById("request-form");
     if (form) {
         form.classList.remove("hidden");
-        console.log('📋 Form shown');
+        console.log('✅ Form shown');
     }
 }
 
 function submitRequest() {
-    console.log('✅ submitRequest called');
+    console.log('📤 Submit request called');
     const title = document.getElementById("request-title").value.trim();
     const description = document.getElementById("request-description").value.trim();
     const priority = document.getElementById("request-priority").value;
@@ -33,7 +33,8 @@ function submitRequest() {
         return;
     }
     
-    fetch('http://localhost:3000/api/requests', {
+    // ✅ ИСПРАВЛЕНО: используем API_BASE вместо localhost
+    fetch(API_BASE + '/requests', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ function submitRequest() {
         if (data.success) {
             alert('Заявка создана успешно!');
             resetForm();
-            displayRequests(); // Обновляем список заявок
+            displayRequests();
         } else {
             alert('Ошибка: ' + data.error);
         }
@@ -58,7 +59,7 @@ function submitRequest() {
 }
 
 function resetForm() {
-    console.log(' resetForm called');
+    console.log('🔄 Reset form called');
     document.getElementById("request-title").value = "";
     document.getElementById("request-description").value = "";
     document.getElementById("request-form").classList.add("hidden");
@@ -66,11 +67,11 @@ function resetForm() {
 
 // Функция для отображения заявок
 async function displayRequests() {
-    console.log(' Displaying requests');
+    console.log('📂 Displaying requests');
     const container = document.getElementById("requests-container");
     
     if (!container) {
-        console.error(' Container not found');
+        console.error('❌ Container not found');
         return;
     }
     
@@ -81,7 +82,8 @@ async function displayRequests() {
     }
     
     try {
-        const response = await fetch('http://localhost:3000/api/requests', {
+        // ✅ ИСПРАВЛЕНО: используем API_BASE вместо localhost
+        const response = await fetch(API_BASE + '/requests', {
             headers: {
                 'Authorization': userKey
             }
@@ -99,10 +101,8 @@ async function displayRequests() {
             return;
         }
         
-        // Очищаем контейнер
         container.innerHTML = '';
         
-        // Отображаем заявки
         requests.forEach(request => {
             const requestElement = document.createElement('div');
             requestElement.className = `request priority-${request.priority} status-${request.status}`;
@@ -140,7 +140,8 @@ async function deleteRequest(id) {
     if (!userKey) return;
     
     try {
-        const response = await fetch(`http://localhost:3000/api/requests/${id}`, {
+        // ✅ ИСПРАВЛЕНО: используем API_BASE вместо localhost
+        const response = await fetch(API_BASE + '/requests/' + id, {
             method: 'DELETE',
             headers: {
                 'Authorization': userKey
@@ -151,7 +152,7 @@ async function deleteRequest(id) {
         
         if (data.success) {
             alert('Заявка удалена');
-            displayRequests(); // Обновляем список
+            displayRequests();
         } else {
             alert('Ошибка: ' + data.error);
         }
@@ -164,20 +165,20 @@ async function deleteRequest(id) {
 // Вспомогательные функции
 function getStatusText(status) {
     const statusMap = {
-        'new': ' Новая',
-        'in-progress': ' В работе',
-        'completed': ' Завершена',
-        'rejected': ' Отклонена'
+        'new': '🆕 Новая',
+        'in-progress': '🔄 В работе',
+        'completed': '✅ Завершена',
+        'rejected': '❌ Отклонена'
     };
     return statusMap[status] || status;
 }
 
 function getPriorityText(priority) {
     const priorityMap = {
-        'low': ' Низкий',
-        'medium': ' Средний', 
-        'high': ' Высокий',
-        'critical': ' Критический'
+        'low': '🟢 Низкий',
+        'medium': '🟡 Средний', 
+        'high': '🟠 Высокий',
+        'critical': '🔴 Критический'
     };
     return priorityMap[priority] || priority;
 }
