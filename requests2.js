@@ -1,7 +1,7 @@
 const API_BASE = window.location.origin + '/api';
 console.log('API Base URL:', API_BASE);
 
-console.log('✅ requests.js started loading');
+console.log('✅ requests2.js started loading');
 
 // Основные функции
 function showRequestForm() {
@@ -196,4 +196,4 @@ window.resetForm = resetForm;
 window.displayRequests = displayRequests;
 window.deleteRequest = deleteRequest;
 
-console.log('🎉 requests.js loaded successfully');
+console.log('🎉 requests2.js loaded successfully');
