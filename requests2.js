@@ -1,3 +1,5 @@
+const API_BASE = window.location.origin + '/api';
+console.log('API Base URL:', API_BASE);
 // requests.js - с функцией отображения заявок
 console.log(' requests.js started loading');
 
