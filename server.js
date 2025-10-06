@@ -452,3 +452,6 @@ app.patch('/api/requests/:id/status', authenticateToken, (req, res) => {
         }
     );
 });
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+});
