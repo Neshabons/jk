@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // Middleware
 app.use(cors());
@@ -452,6 +452,8 @@ app.patch('/api/requests/:id/status', authenticateToken, (req, res) => {
         }
     );
 });
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Database: chat.db`);
+    console.log(`🔐 API endpoints available at /api/`);
 });
