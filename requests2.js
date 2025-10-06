@@ -195,26 +195,13 @@ function getPriorityText(priority) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Page loaded, initializing...');
     
-    // Находим все элементы и добавляем обработчики
-    const showFormBtn = document.getElementById('show-request-form-btn');
-    const submitBtn = document.getElementById('submit-request-btn');
-    const cancelBtn = document.getElementById('cancel-request-btn');
+    // Проверяем авторизацию и показываем кнопку создания заявки
+    const userKey = localStorage.getItem('userKey');
+    const createBtn = document.getElementById('create-request-btn');
     
-    if (showFormBtn) {
-        showFormBtn.addEventListener('click', showRequestForm);
-        console.log('✅ Show form button event listener added');
-    } else {
-        console.error('❌ Show form button not found');
-    }
-    
-    if (submitBtn) {
-        submitBtn.addEventListener('click', submitRequest);
-        console.log('✅ Submit button event listener added');
-    }
-    
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', resetForm);
-        console.log('✅ Cancel button event listener added');
+    if (userKey && createBtn) {
+        createBtn.style.display = 'block';
+        console.log('✅ User authorized, show create button');
     }
     
     // Загружаем заявки
@@ -223,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🎉 requests2.js initialized successfully');
 });
 
-// Регистрируем функции глобально (для обратной совместимости)
+// Регистрируем функции глобально
 window.showRequestForm = showRequestForm;
 window.submitRequest = submitRequest;
 window.resetForm = resetForm;
