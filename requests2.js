@@ -1,30 +1,31 @@
 console.log('✅ requests2.js started loading');
 
-// Переносим API_BASE внутрь функций или защищаем
-let API_BASE;
-
-try {
-    API_BASE = window.location.origin + '/api';
-    console.log('API Base URL:', API_BASE);
-} catch (error) {
-    console.error('Error setting API_BASE:', error);
-    // Fallback для разработки
-    API_BASE = '/api';
+// Функция для безопасного получения API_BASE
+function getApiBase() {
+    // Если window.location не доступен, используем относительный путь
+    if (typeof window === 'undefined' || !window.location) {
+        return '/api';
+    }
+    return window.location.origin + '/api';
 }
-
 
 // Основные функции
 function showRequestForm() {
-    console.log(' showRequestForm called');
+    console.log('📝 Show request form called');
     const form = document.getElementById("request-form");
     if (form) {
         form.classList.remove("hidden");
-        console.log('📋 Form shown');
+        console.log('✅ Form shown');
     }
 }
 
 function submitRequest() {
-    console.log('✅ submitRequest called');
+    console.log('📤 Submit request called');
+    
+    // Получаем API_BASE внутри функции
+    const API_BASE = getApiBase();
+    console.log('Using API Base:', API_BASE);
+    
     const title = document.getElementById("request-title").value.trim();
     const description = document.getElementById("request-description").value.trim();
     const priority = document.getElementById("request-priority").value;
@@ -34,16 +35,13 @@ function submitRequest() {
         return;
     }
     
-    console.log('📤 Sending request:', { title, description, priority });
-    
-    // Отправка на сервер
     const userKey = localStorage.getItem('userKey');
     if (!userKey) {
         alert('Ошибка авторизации');
         return;
     }
     
-    fetch('http://localhost:3000/api/requests', {
+    fetch(API_BASE + '/requests', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -56,7 +54,7 @@ function submitRequest() {
         if (data.success) {
             alert('Заявка создана успешно!');
             resetForm();
-            displayRequests(); // Обновляем список заявок
+            displayRequests();
         } else {
             alert('Ошибка: ' + data.error);
         }
@@ -66,7 +64,6 @@ function submitRequest() {
         alert('Ошибка соединения с сервером');
     });
 }
-
 function resetForm() {
     console.log(' resetForm called');
     document.getElementById("request-title").value = "";
@@ -76,6 +73,7 @@ function resetForm() {
 
 // Функция для отображения заявок
 async function displayRequests() {
+    const API_BASE = getApiBase();
     console.log(' Displaying requests');
     const container = document.getElementById("requests-container");
     
@@ -144,6 +142,7 @@ async function displayRequests() {
 
 // Функция удаления заявки
 async function deleteRequest(id) {
+    const API_BASE = getApiBase();
     if (!confirm('Удалить эту заявку?')) return;
     
     const userKey = localStorage.getItem('userKey');
